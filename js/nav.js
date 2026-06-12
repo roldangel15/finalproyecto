@@ -287,7 +287,7 @@ function barraNavExpandida(opcion = 'location') {
 <!-- diseño movil-->
 
    
-  <div class="fixed top-0 left-0 w-full h-[60%] bg-white shadow-md z-50 flex flex-col pt-14 px-6 font-sans  overflow-hidden md:hidden">
+  <div class="fixed top-0 left-0 w-full h-[100%] bg-white shadow-md z-50 flex flex-col pt-14 px-6 font-sans  overflow-hidden md:hidden">
   
   <!-- Contenedor del contenido principal -->
   <div class="w-full max-w-md mx-auto flex-grow flex flex-col justify-between mt-2 pb-6">
