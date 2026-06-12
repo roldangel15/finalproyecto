@@ -29,7 +29,7 @@ function agregarNavHuesped() {
       <p class="text-sm text-gray-400 mb-3">Ages 13 or above</p>
       <div class="flex items-center gap-4">
         <button class="w-8 h-8 rounded-full border-2 border-gray-300 flex items-center justify-center text-gray-500 hover:border-gray-500 transition text-lg font-light" data-action="disminuye-adultos">−</button>
-        <span id="cantAdultos" class="text-base font-medium text-gray-800 w-6 text-center">${filtros.adultos}</span>
+        <span class="cantAdultos text-base font-medium text-gray-800 w-6 text-center">${filtros.adultos}</span>
         <button class="w-8 h-8 rounded-full border-2 border-gray-300 flex items-center justify-center text-gray-500 hover:border-gray-500 transition text-lg font-light" data-action="aumenta-adultos">+</button>
       </div>
     </div>
@@ -39,7 +39,7 @@ function agregarNavHuesped() {
       <p class="text-sm text-gray-400 mb-3">Ages 0-12</p>
       <div class="flex items-center gap-4">
         <button class="w-8 h-8 rounded-full border-2 border-gray-300 flex items-center justify-center text-gray-500 hover:border-gray-500 transition text-lg font-light" data-action="disminuye-menores">−</button>
-        <span id="cantMenores" class="text-base font-medium text-gray-800 w-6 text-center">${filtros.menores}</span>
+        <span class="cantMenores text-base font-medium text-gray-800 w-6 text-center">${filtros.menores}</span>
         <button class="w-8 h-8 rounded-full border-2 border-gray-300 flex items-center justify-center text-gray-500 hover:border-gray-500 transition text-lg font-light" data-action="aumenta-menores">+</button>
       </div>
     </div>
@@ -83,19 +83,17 @@ function agregarNavLocation(valorBusqueda) {
 }
 
 function actualizarHuespedNav() {
-  const cantAdultos = document.getElementById('cantAdultos');
-  const cantMenores = document.getElementById('cantMenores');
-  const inputGuests = document.getElementById('huespedes');
-  const inputGuestsMobile = document.getElementById('huespedes-mobile');
-  
-  if (cantAdultos) cantAdultos.textContent = filtros.adultos;
-  if (cantMenores) cantMenores.textContent = filtros.menores;
+  // Actualizar TODOS los elementos con estas clases (desktop y móvil)
+  const cantAdultosElements = document.querySelectorAll('.cantAdultos');
+  const cantMenoresElements = document.querySelectorAll('.cantMenores');
+  const inputGuestsElements = document.querySelectorAll('.input-guests');
   
   const totalGuests = filtros.adultos + filtros.menores;
   const guestsValue = totalGuests > 0 ? `${totalGuests} guest${totalGuests > 1 ? 's' : ''}` : '';
   
-  if (inputGuests) inputGuests.value = guestsValue;
-  if (inputGuestsMobile) inputGuestsMobile.value = guestsValue;
+  cantAdultosElements.forEach(el => el.textContent = filtros.adultos);
+  cantMenoresElements.forEach(el => el.textContent = filtros.menores);
+  inputGuestsElements.forEach(el => el.value = guestsValue);
 }
 
 function barraNavReplegada() {
@@ -108,7 +106,7 @@ function barraNavReplegada() {
       <img src="./src/images/icons/logo-f7862584.svg" alt="logo-windbnb" class="p-4 lg:px-10 lg:py-6" />
       <span class="flex px-7 py-5 relative justify-center lg:w-1/2 lg:justify-center">
         <input type="text" readonly class="p-2.5 rounded-l-2xl shadow w-33 outline-none cursor-pointer bg-white" placeholder="  Add location" id="lugares" value="${locationValue}" />
-        <input class="p-2.5 shadow w-33 outline-none cursor-pointer bg-white" type="text" readonly placeholder="   Add guests" id="huespedes" value="${guestsValue}" />
+        <input class="p-2.5 shadow w-33 outline-none cursor-pointer bg-white input-guests" type="text" readonly placeholder="   Add guests" id="huespedes" value="${guestsValue}" />
         <button id="btnSearch" class="p-3.5 shadow rounded-r-2xl lg:right-20 cursor-pointer bg-white hover:bg-gray-50 transition">
           <img src="./src/images/icons/search.svg" alt="search-icon" class="w-4" />
         </button>
@@ -122,8 +120,8 @@ function barraNavExpandida(opcion = 'location') {
   const guestsText = totalGuests > 0 ? `${totalGuests} guest${totalGuests > 1 ? 's' : ''}` : '';
   let agregarLocalidadHtml = opcion === 'location' ? agregarNavLocation(filtros.location) : '';
   let agregarHuespedHtml = opcion === 'huesped' ? agregarNavHuesped() : '';
-  let visibleLugarConci = opcion === 'location' ? '' : 'hidden';
-  let visibleCuadroHuesp = opcion === 'huesped' ? '' : 'hidden';
+  let visibleLugarConci = opcion === 'location' ? '' : 'class="hidden"';
+  let visibleCuadroHuesp = opcion === 'huesped' ? '' : 'class="hidden"';
 
   elEncabezado.innerHTML = `
     <!-- DISEÑO ESCRITORIO -->
@@ -132,14 +130,14 @@ function barraNavExpandida(opcion = 'location') {
         <div class="grid grid-cols-3 gap-2 h-20 items-center">
           <div class="h-full flex flex-col justify-center pl-8 border border-gray-200 rounded-2xl bg-white transition-all duration-150 cursor-pointer shadow-sm focus-within:border-2 focus-within:border-black">
             <label class="block text-[10px] font-black uppercase text-gray-900 tracking-wider">Location</label>
-            <input id="lugares" type="text" placeholder="Add location" value="${filtros.location}" class="w-full text-sm text-gray-700 bg-transparent outline-none mt-1 placeholder-gray-400 border-none p-0" />
+            <input id="lugares-desktop" type="text" placeholder="Add location" value="${filtros.location}" class="w-full text-sm text-gray-700 bg-transparent outline-none mt-1 placeholder-gray-400 border-none p-0" />
           </div>
           <div tabindex="0" class="h-full flex flex-col justify-center pl-8 border border-gray-200 rounded-2xl bg-white transition-all duration-150 cursor-pointer shadow-sm focus:border-2 focus:border-black">
             <label class="block text-[10px] font-black uppercase text-gray-900 tracking-wider">Guests</label>
-            <input id="huespedes" type="text" readonly placeholder="Add guests" class="w-full text-sm text-gray-700 bg-transparent outline-none mt-1 placeholder-gray-400 border-none p-0" value="${guestsText}" />
+            <input class="w-full text-sm text-gray-700 bg-transparent outline-none mt-1 placeholder-gray-400 border-none p-0 input-guests" type="text" readonly placeholder="Add guests" value="${guestsText}" />
           </div>
           <div class="h-full flex items-center justify-end pr-4">
-            <button id="btnSearchExpanded" class="bg-[#EB5757] hover:bg-red-500 text-white flex items-center px-8 py-3.5 rounded-2xl shadow-sm transition-colors">
+            <button class="btn-search-desktop bg-[#EB5757] hover:bg-red-500 text-white flex items-center px-8 py-3.5 rounded-2xl shadow-sm transition-colors">
               <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
               </svg>
@@ -149,12 +147,12 @@ function barraNavExpandida(opcion = 'location') {
         </div>
         <div class="grid grid-cols-3 flex-grow pt-8">
           <div> 
-            <div class="${visibleLugarConci}">
+            <div ${visibleLugarConci}>
               ${agregarLocalidadHtml}
             </div>  
           </div>
           <div class="space-y-8 pl-8">
-            <div class="${visibleCuadroHuesp}">
+            <div ${visibleCuadroHuesp}>
               ${agregarHuespedHtml}
             </div>    
           </div>
@@ -164,44 +162,44 @@ function barraNavExpandida(opcion = 'location') {
     </div>
 
     <!-- DISEÑO MÓVIL -->
-    <div class="fixed top-0 left-0 w-full h-full bg-white z-50 flex flex-col font-sans md:hidden">
-      <div class="flex justify-between items-center px-6 py-4 border-b border-gray-100">
-        <h2 class="text-xs font-bold uppercase tracking-wider text-gray-400">Edit your search</h2>
-        <button id="btnCerrarMobile" class="text-2xl font-light text-gray-500 hover:text-black p-1">✕</button>
-      </div>
-      <div class="flex-1 overflow-y-auto px-6 py-4 pb-32">
-        <div class="border border-gray-200 rounded-2xl shadow-sm overflow-hidden bg-white mb-4">
-          <div class="p-4 border-b border-gray-100">
-            <label class="block text-[10px] font-black uppercase text-gray-900 tracking-wide mb-2">Location</label>
-            <input id="lugares-mobile" type="text" placeholder="Add location" class="w-full text-sm text-gray-700 bg-transparent outline-none placeholder-gray-400 border-none p-0" value="${filtros.location}" />
+    <div class="fixed top-0 left-0 w-full h-full bg-white shadow-md z-50 flex flex-col pt-14 px-6 font-sans overflow-hidden md:hidden">
+      <div class="w-full max-w-md mx-auto flex-grow flex flex-col justify-between mt-2 pb-6">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-xs font-bold uppercase tracking-wider text-gray-400">Edit your search</h2>
+          <button class="btn-close-mobile text-xl font-light text-gray-500 hover:text-black focus:outline-none p-1">×</button>
+        </div>
+        <div class="border border-gray-200 rounded-2xl shadow-sm overflow-hidden bg-white">
+          <div class="p-3 border-b border-gray-100">
+            <label class="block text-[10px] font-black uppercase text-gray-900 tracking-wide">Location</label>
+            <input id="lugares-mobile" type="text" placeholder="Add location" class="w-full text-sm text-gray-700 bg-transparent outline-none mt-1 placeholder-gray-400 border-none p-0" value="${filtros.location}" />
           </div>
-          <div class="p-4">
-            <label class="block text-[10px] font-black uppercase text-gray-900 tracking-wide mb-2">Guests</label>
-            <input id="huespedes-mobile" type="text" readonly placeholder="Add guests" class="w-full text-sm text-gray-700 bg-transparent outline-none placeholder-gray-400 border-none p-0" value="${guestsText}" />
+          <div class="p-3">
+            <label class="block text-[10px] font-black uppercase text-gray-900 tracking-wide">Guests</label>
+            <input class="w-full text-sm text-gray-700 bg-transparent outline-none mt-1 placeholder-gray-400 border-none p-0 input-guests" type="text" readonly placeholder="Add guests" value="${guestsText}" />
           </div>
         </div>
-        <div class="${visibleLugarConci}">
+        <div ${visibleLugarConci} class="mobile-location-results">
           ${agregarLocalidadHtml}
         </div>
-        <div class="${visibleCuadroHuesp}">
+        <div ${visibleCuadroHuesp}>
           ${agregarHuespedHtml}
         </div>
-      </div>
-      <div class="absolute bottom-0 left-0 w-full bg-white border-t border-gray-200 p-4 shadow-lg">
-        <button id="btnSearchMobile" class="w-full bg-[#EB5757] hover:bg-red-500 text-white flex items-center justify-center px-7 py-3.5 rounded-2xl shadow-md transition-colors">
-          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-          </svg>
-          <span class="font-semibold text-sm">Search</span>
-        </button>
+        <div class="flex justify-center mt-auto">
+          <button class="btn-search-mobile bg-[#EB5757] hover:bg-red-500 text-white flex items-center px-7 py-2.5 rounded-2xl shadow-md transition-colors">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+            <span class="font-semibold text-sm">Search</span>
+          </button>
+        </div>
       </div>
     </div>
   `;
 
   setTimeout(() => {
     const input = opcion === 'location' 
-      ? (window.innerWidth < 768 ? document.getElementById('lugares-mobile') : document.getElementById('lugares'))
-      : (window.innerWidth < 768 ? document.getElementById('huespedes-mobile') : document.getElementById('huespedes'));
+      ? (window.innerWidth < 768 ? document.getElementById('lugares-mobile') : document.getElementById('lugares-desktop'))
+      : (window.getElementById('huespedes'));
     
     if (input) {
       input.focus();
@@ -218,12 +216,12 @@ document.addEventListener('click', (e) => {
   const target = e.target.closest('[data-action]') || e.target;
   const action = target.getAttribute('data-action');
 
-  if (target.id === 'lugares' || target.id === 'lugares-mobile') {
+  if (target.id === 'lugares' || target.id === 'lugares-desktop' || target.id === 'lugares-mobile') {
     e.preventDefault();
     barraNavExpandida('location');
     return;
   }
-  if (target.id === 'huespedes' || target.id === 'huespedes-mobile') {
+  if (target.id === 'huespedes' || target.classList.contains('input-guests')) {
     e.preventDefault();
     barraNavExpandida('huesped');
     return;
@@ -232,11 +230,11 @@ document.addEventListener('click', (e) => {
     aplicarFiltros();
     return;
   }
-  if (target.id === 'btnCerrarMobile') {
+  if (target.classList.contains('btn-close-mobile')) {
     barraNavReplegada();
     return;
   }
-  if (target.id === 'btnSearchExpanded' || target.id === 'btnSearchMobile' || target.closest('#btnSearchExpanded') || target.closest('#btnSearchMobile')) {
+  if (target.classList.contains('btn-search-desktop') || target.classList.contains('btn-search-mobile') || target.closest('.btn-search-desktop') || target.closest('.btn-search-mobile')) {
     aplicarFiltros();
     barraNavReplegada();
     return;
@@ -275,16 +273,18 @@ document.addEventListener('click', (e) => {
 });
 
 document.addEventListener('input', (e) => {
-  if (e.target.id === 'lugares' || e.target.id === 'lugares-mobile') {
+  if (e.target.id === 'lugares' || e.target.id === 'lugares-desktop' || e.target.id === 'lugares-mobile') {
     filtros.location = e.target.value.trim();
     
     const esMovil = window.innerWidth < 768;
     let contenedorDestino;
 
     if (esMovil) {
-      contenedorDestino = document.querySelector('.fixed.top-0.left-0.w-full.h-full.bg-white.z-50 > div.flex-1 > div:nth-child(3)');
+      // En móvil, buscamos el contenedor específico con clase
+      contenedorDestino = document.querySelector('.mobile-location-results');
     } else {
-      contenedorDestino = document.querySelector('.grid-cols-3.flex-grow > div:first-child > div');
+      // En escritorio, buscamos la columna izquierda inferior
+      contenedorDestino = document.querySelector('.grid-cols-3.flex-grow > div:first-child > div:not(.hidden)');
     }
 
     if (!contenedorDestino) return;
