@@ -73,9 +73,10 @@ function agregarNavHuesped() {
  */
 function agregarNavLocation(valorBusqueda)
 { 
-  if (valorBusqueda === "") return '';
+  if (valorBusqueda === '') return '';
   const alojamientos = getAlojamientos();
   if (!alojamientos) return '';
+  
   
   const ciudades = alojamientos
   .reduce((acc, a) => {
@@ -88,13 +89,7 @@ function agregarNavLocation(valorBusqueda)
 
   const ciudadesFiltradas = ciudades.filter(c => c.city.toLowerCase().includes(valorBusqueda.toLowerCase()));
   
-  
-  
-   
-  let html = `
-    
-      <div class="py-2 max-h-80 overflow-y-auto">
-  `;  
+  let html = ``;  
 
   if (ciudadesFiltradas.length === 0 && valorBusqueda) {
     html += `<div class="px-6 py-8 text-center"><p class="text-sm text-gray-500">No destinations found for "${valorBusqueda}"</p></div>`;
@@ -116,13 +111,14 @@ function agregarNavLocation(valorBusqueda)
  
  html += `
       </div>
-   
+
+    </div>
   `;
   return html;
 
 
 }
-
+/*debemos ver si lo quitamos
 /** 
  * Actualiza los datos en lo concerniente a Guests de la barra de navegacion
 */
@@ -198,8 +194,8 @@ function barraNavExpandida(opcion = 'location') {
 
   //  REEMPLAZA COMPLETAMENTE el contenido del encabezado
     elEncabezado.innerHTML = `
-<div class="fixed top-0 left-0 w-full h-[60%] bg-white shadow-md z-50 flex flex-col pt-14 px-16 font-sans hidden md:block">
-  
+
+<div class="hidden md:flex fixed top-0 left-0 w-full bg-white shadow-md z-50 flex-col pt-14 px-16 font-sans" style="height:60%;">  
   <div class="w-full max-w-6xl mx-auto flex flex-col h-full justify-between pb-10">
     
     <!-- BARRA DE BÚSQUEDA CON INPUTS INDEPENDIENTES Y FOCO DINÁMICO -->
@@ -207,15 +203,16 @@ function barraNavExpandida(opcion = 'location') {
       
       <!-- Input de Ubicación (Borde negro dinámico al enfocar) -->
       <div class="h-full flex flex-col justify-center pl-8 border border-gray-200 rounded-2xl bg-white transition-all duration-150 cursor-pointer shadow-sm focus-within:border-2 focus-within:border-black focus-within:ring-0">
-              
-       <label class="block text-[10px] font-black uppercase text-gray-900 tracking-wider">Location</label>
-        <input 
-         id="lugares" 
-         type="text" 
-         placeholder="Add location" 
-         class="w-full text-sm text-gray-700 bg-transparent outline-none mt-1 placeholder-gray-400 focus:ring-0 border-none p-0"
-         value ="${filtros.location}"/>
-      </div>
+  <label class="block text-[10px] font-black uppercase text-gray-900 tracking-wider">Location</label>
+  <input 
+  id="lugares" 
+  type="text" 
+  placeholder="Add location"
+  value ="${filtros.location}"
+  
+  class="w-full text-sm text-gray-700 bg-transparent outline-none mt-1 placeholder-gray-400 focus:ring-0 border-none p-0" value="">
+  <!-- JavaScript inyectará aquí el menú flotante sin agrandar esta caja -->
+</div>
 
       <!-- Input de Huéspedes (Ahora con borde gris por defecto y negro solo al enfocar/hacer clic) -->
       <div tabindex="0" class="h-full flex flex-col justify-center pl-8 border border-gray-200 rounded-2xl bg-white transition-all duration-150 cursor-pointer shadow-sm focus:border-2 focus:border-black focus:outline-none focus-within:border-2 focus-within:border-black">
@@ -287,17 +284,14 @@ function barraNavExpandida(opcion = 'location') {
 
 
 
-
-
-
 <!-- diseño movil-->
 
    
-  <div class="fixed top-0 left-0 w-full h-[60%] bg-white shadow-md z-50 flex flex-col pt-14 px-6 font-sans block md:hidden">
+  <div class="fixed top-0 left-0 w-full h-[60%] bg-white shadow-md z-50 flex flex-col pt-14 px-6 font-sans  overflow-hidden md:hidden">
   
   <!-- Contenedor del contenido principal -->
   <div class="w-full max-w-md mx-auto flex-grow flex flex-col justify-between mt-2 pb-6">
-    
+ 
     <!-- Título de la búsqueda y Botón X alineados en la misma línea -->
     <div class="flex justify-between items-center mb-4">
       <h2 class="text-xs font-bold uppercase tracking-wider text-gray-400">Edit your search</h2>
@@ -314,7 +308,7 @@ function barraNavExpandida(opcion = 'location') {
          id="lugares" 
          type="text" 
          placeholder="Add location" 
-         class="w-full text-sm text-gray-700 bg-transparent outline-none mt-1 placeholder-gray-400 focus:ring-0 border-none p-0"
+         class="w-full text-sm text-gray-700 bg-transparent outline-none mt-1 placeholder-gray-400 border-none p-0"
          value ="${filtros.location}"/>
 
 
@@ -476,17 +470,36 @@ document.addEventListener('click', (e) => {
 
 document.addEventListener('input', (e) => {
   if (e.target.id === 'lugares') {
-    filtros.location = e.target.value.trim(); //almacenamos cada caracter que escribe
-    const locationContenedor = e.target.parentElement;
-    const existMenuDesplegable = locationContenedor.querySelector('.absolute');
-  
-    if (existMenuDesplegable) {
-      existMenuDesplegable.outerHTML = agregarNavLocation(filtros.location);
+    filtros.location = e.target.value.trim();
+
+    // 1. Identificamos en qué vista estamos (Escritorio o Móvil)
+    const esMovil = window.innerWidth < 768; // md es 768px en Tailwind
+    let contenedorDestino;
+
+    if (esMovil) {
+      // En móvil, buscamos el div de resultados que está al final del bloque
+      contenedorDestino = document.querySelector('.block.md\\:hidden > div > div:last-child');
+    } else {
+      // En escritorio, buscamos la columna izquierda inferior vacía
+      contenedorDestino = document.querySelector('.grid-cols-3.flex-grow > div:first-child > div');
     }
+
+    // 2. Si no encontramos el contenedor correcto, salimos para evitar errores
+    if (!contenedorDestino) return;
+
+    // 3. Si el input está vacío, limpiamos la zona de abajo inmediatamente
+    if (filtros.location === '') {
+      contenedorDestino.innerHTML = '';
+      aplicarFiltros();
+      return;
+    }
+
+    // 4. Actualización inmediata y limpia: Sobrescribimos el contenedor de abajo
+    contenedorDestino.innerHTML = agregarNavLocation(filtros.location);
+
     aplicarFiltros();
   }
 });
 
 barraNavReplegada();
-
 
