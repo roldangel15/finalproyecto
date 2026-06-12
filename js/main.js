@@ -2,6 +2,7 @@
  * 
  * @returns Esta funcion descargaslos datos en formato Json a la variable objeto datos es asincronica, espera a que los datos se descarguen por completo antes de continuar
  */
+ let errorMensaje="";
 async function leerDatos() {
     try {
         const respuesta = await fetch('/stays.json');
@@ -14,7 +15,7 @@ async function leerDatos() {
         return datos;
        
     } catch (error) {
-        console.error("Hubo un error:", error);
+        errorMensaje="Hubo un error al intentar obtener datos";
     }
 }
 
@@ -34,7 +35,9 @@ export function renderCards(lista) {
     departamentos.innerHTML = `
       <div class="col-span-full text-center py-12 text-red-500">
         <p class="text-lg font-semibold">No se pudieron cargar los alojamientos.</p>
-        <p class="text-sm mt-2 text-gray-600">No existen alojamientos disponible para tu busqueda.</p>
+       
+        <p class="text-sm mt-2 text-gray-600"> ${errorMensaje.length === 0 ? errorMensaje : 'No existen alojamientos disponibles para tu búsqueda.'}
+
       </div>
     `;
     if (stayContador) stayContador.textContent = `0 stays`;

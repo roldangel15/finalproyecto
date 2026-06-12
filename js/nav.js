@@ -124,7 +124,7 @@ function barraNavReplegada() {
   const locationValue = filtros.location || '';
   const totalGuests = filtros.adultos + filtros.menores;
   const guestsValue = totalGuests > 0 ? `${totalGuests} guest${totalGuests > 1 ? 's' : ''}` : '';
-
+ 
   elEncabezado.innerHTML = `
     <nav class="flex flex-col md:flex-row items-center justify-center md:justify-between gap-4 mb-8">
       <img src="./src/images/icons/logo-f7862584.svg" alt="logo-windbnb" class="p-4 lg:px-10 lg:py-6" />
@@ -150,7 +150,7 @@ function barraNavExpandida(opcion = 'location') {
   let agregarHuespedHtml = opcion === 'huesped' ? agregarNavHuesped() : '';
   let visibleLugarConci = opcion === 'location' ? '' : 'class="hidden"';
   let visibleCuadroHuesp = opcion === 'huesped' ? '' : 'class="hidden"';
-
+ 
   elEncabezado.innerHTML = `
     <!-- DISEÑO ESCRITORIO -->
     <div class="hidden md:flex fixed top-0 left-0 w-full bg-white shadow-md z-50 flex-col pt-14 px-16 font-sans" style="height:60%;">  
