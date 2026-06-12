@@ -1,13 +1,20 @@
+//importamos las dos funciones que usaremosde main.js
 import { getAlojamientos, renderCards } from '/js/main.js';
-
+// por "elEncabezado" cambiaremos de manera dinamica la barra de navegacion
 const elEncabezado = document.getElementById('encabezado');
 
+// el objeto "filtros" se usara para actualizar y realizar los filtros de busqueda
 let filtros = {
   location: '',
   adultos: 0,
   menores: 0
 };
 
+/**
+ * 
+ * @returns aplica los filtros de busqueda por lugar y nro de huespedes que provee el Apartamento y actualiza segun el filtro la grilla de apartamentos disponibles
+ * 
+ */
 function aplicarFiltros() {
   const todos = getAlojamientos();
   if (!todos || todos.length === 0) return;
@@ -22,15 +29,20 @@ function aplicarFiltros() {
   renderCards(filtrados);
 }
 
+/**
+ * 
+ * @returns en la barra de navegacion en la parte de de Guests despliega el cuadro para aumentar el numero de Huespedes, adultos y niños o menores
+ */
+
 function agregarNavHuesped() {
   return `
     <div class="mb-6">
       <h3 class="text-base font-bold text-gray-900">Adults</h3>
       <p class="text-sm text-gray-400 mb-3">Ages 13 or above</p>
       <div class="flex items-center gap-4">
-        <button class="w-8 h-8 rounded-full border-2 border-gray-300 flex items-center justify-center text-gray-500 hover:border-gray-500 transition text-lg font-light" data-action="disminuye-adultos">−</button>
+        <button class="w-8 h-8 rounded-md border-2 border-gray-300 flex items-center justify-center text-gray-500 hover:border-gray-500 transition text-lg font-light" data-action="disminuye-adultos">−</button>
         <span class="cantAdultos text-base font-medium text-gray-800 w-6 text-center">${filtros.adultos}</span>
-        <button class="w-8 h-8 rounded-full border-2 border-gray-300 flex items-center justify-center text-gray-500 hover:border-gray-500 transition text-lg font-light" data-action="aumenta-adultos">+</button>
+        <button class="w-8 h-8 rounded-md border-2 border-gray-300 flex items-center justify-center text-gray-500 hover:border-gray-500 transition text-lg font-light" data-action="aumenta-adultos">+</button>
       </div>
     </div>
     <div class="h-px bg-gray-100 mb-6"></div>
@@ -38,14 +50,19 @@ function agregarNavHuesped() {
       <h3 class="text-base font-bold text-gray-900">Children</h3>
       <p class="text-sm text-gray-400 mb-3">Ages 0-12</p>
       <div class="flex items-center gap-4">
-        <button class="w-8 h-8 rounded-full border-2 border-gray-300 flex items-center justify-center text-gray-500 hover:border-gray-500 transition text-lg font-light" data-action="disminuye-menores">−</button>
+        <button class="w-8 h-8 rounded-md border-2 border-gray-300 flex items-center justify-center text-gray-500 hover:border-gray-500 transition text-lg font-light" data-action="disminuye-menores">−</button>
         <span class="cantMenores text-base font-medium text-gray-800 w-6 text-center">${filtros.menores}</span>
-        <button class="w-8 h-8 rounded-full border-2 border-gray-300 flex items-center justify-center text-gray-500 hover:border-gray-500 transition text-lg font-light" data-action="aumenta-menores">+</button>
+        <button class="w-8 h-8 rounded-md border-2 border-gray-300 flex items-center justify-center text-gray-500 hover:border-gray-500 transition text-lg font-light" data-action="aumenta-menores">+</button>
       </div>
     </div>
   `;
 }
 
+/**
+ * funcion que se encarga de aumentar o desplegar en la parte de abajo de Location de la barra de navegacion las coincidencias de busqueda
+ * @param {es el texto que escribe en "Location"} valorBusqueda 
+ * @returns las coincidencias de busqueda que se desplegaran
+ */
 function agregarNavLocation(valorBusqueda) {
   if (valorBusqueda === '') return '';
   const alojamientos = getAlojamientos();
@@ -82,6 +99,9 @@ function agregarNavLocation(valorBusqueda) {
   return html;
 }
 
+/** 
+ * Actualiza los datos en lo concerniente a Guests de la barra de navegacion
+*/
 function actualizarHuespedNav() {
   // Actualizar TODOS los elementos con estas clases (desktop y móvil)
   const cantAdultosElements = document.querySelectorAll('.cantAdultos');
@@ -95,6 +115,10 @@ function actualizarHuespedNav() {
   cantMenoresElements.forEach(el => el.textContent = filtros.menores);
   inputGuestsElements.forEach(el => el.value = guestsValue);
 }
+
+/**
+ * Muestra la barra de navegacion resumida a 3 bontones
+ */
 
 function barraNavReplegada() {
   const locationValue = filtros.location || '';
@@ -114,6 +138,10 @@ function barraNavReplegada() {
     </nav>
   `;
 }
+
+/**
+ * Muestra la barra de navegacion desplegada segun la busqueda que se desea realizar
+ */
 
 function barraNavExpandida(opcion = 'location') {
   const totalGuests = filtros.adultos + filtros.menores;
@@ -199,7 +227,7 @@ function barraNavExpandida(opcion = 'location') {
   setTimeout(() => {
     const input = opcion === 'location' 
       ? (window.innerWidth < 768 ? document.getElementById('lugares-mobile') : document.getElementById('lugares-desktop'))
-      : (window.getElementById('huespedes'));
+      : (document.getElementById('huespedes'));
     
     if (input) {
       input.focus();
@@ -212,6 +240,10 @@ function barraNavExpandida(opcion = 'location') {
   }, 100);
 }
 
+//-----------------------------------------
+
+// control y  delegacion de eventos delegacion
+//--------------------
 document.addEventListener('click', (e) => {
   const target = e.target.closest('[data-action]') || e.target;
   const action = target.getAttribute('data-action');
@@ -280,7 +312,7 @@ document.addEventListener('input', (e) => {
     let contenedorDestino;
 
     if (esMovil) {
-      // En móvil, buscamos el contenedor específico con clase
+      // En movil, buscamos el contenedor específico con clase
       contenedorDestino = document.querySelector('.mobile-location-results');
     } else {
       // En escritorio, buscamos la columna izquierda inferior
